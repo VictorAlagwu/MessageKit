@@ -48,6 +48,10 @@ open class MessagesCollectionViewFlowLayout: UICollectionViewFlowLayout {
         }
     }
 
+    private var messageContainerCache: [Int: CGSize] = [:]
+    private var bottomLabelCache: [Int: CGSize] = [:]
+    private var topLabelCache: [Int: CGSize] = [:]
+
     fileprivate var avatarMessagePadding: CGFloat = 4
 
     fileprivate var messagesCollectionView: MessagesCollectionView? {
@@ -281,6 +285,10 @@ extension MessagesCollectionViewFlowLayout {
     /// The size for the message container.
     fileprivate func messageContainerSize(for message: MessageType, at indexPath: IndexPath) -> CGSize {
 
+//        if let cachedSize = messageContainerCache[indexPath.section] {
+//            return cachedSize
+//        }
+
         let maxWidth = messageContainerMaxWidth(for: message, at: indexPath)
         let messageInsets = messageLabelInsets(for: message, at: indexPath)
         let messageHorizontalInsets = messageInsets.left + messageInsets.right
@@ -310,7 +318,7 @@ extension MessagesCollectionViewFlowLayout {
             let height = layoutDelegate.heightForLocation(message: message, at: indexPath, with: maxWidth, in: messagesCollectionView)
             messageContainerSize = CGSize(width: width, height: height)
         }
-
+        //messageContainerCache[indexPath.section] = messageContainerSize
         return messageContainerSize
     }
 
@@ -390,6 +398,10 @@ extension MessagesCollectionViewFlowLayout {
     /// The size of the cell top label.
     fileprivate func cellTopLabelSize(for message: MessageType, at indexPath: IndexPath) -> CGSize {
 
+//        if let size = topLabelCache[indexPath.section] {
+//            return size
+//        }
+
         guard let messagesCollectionView = messagesCollectionView else { return .zero }
         guard let dataSource = messagesCollectionView.messagesDataSource else { return .zero }
         guard let topLabelText = dataSource.cellTopLabelAttributedText(for: message, at: indexPath) else { return .zero }
@@ -403,6 +415,8 @@ extension MessagesCollectionViewFlowLayout {
 
         size.width += topLabelHorizontalInsets
         size.height += topLabelVerticalInsets
+
+//        topLabelCache[indexPath.section] = size
 
         return size
 
@@ -495,6 +509,10 @@ extension MessagesCollectionViewFlowLayout {
     /// The size for the cell bottom label.
     fileprivate func cellBottomLabelSize(for message: MessageType, at indexPath: IndexPath) -> CGSize {
 
+//        if let size = bottomLabelCache[indexPath.section] {
+//            return size
+//        }
+
         guard let messagesCollectionView = messagesCollectionView else { return .zero }
         guard let dataSource = messagesCollectionView.messagesDataSource else { return .zero }
         guard let bottomLabelText = dataSource.cellBottomLabelAttributedText(for: message, at: indexPath) else { return .zero }
@@ -508,6 +526,8 @@ extension MessagesCollectionViewFlowLayout {
 
         size.width += bottomLabelHorizontalInsets
         size.height += bottomLabelVerticalInsets
+
+        //bottomLabelCache[indexPath.section] = size
 
         return size
         
